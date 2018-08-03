@@ -59,6 +59,7 @@ UserSchema.statics.findByCredentials = function(email, password){
 };
 
 
+
 ////Generating a hash value for password and saving password = hashed value
 
 UserSchema.pre('save', function(next){
@@ -77,6 +78,17 @@ UserSchema.pre('save', function(next){
     next();
   }
 })
+
+//For deleting token from a logged in user
+UserSchema.methods.removeToken = function(token){
+  var user = this;
+
+  return user.update({
+    $pull:{
+      tokens: {token}
+    }
+  });
+};
 
 
 UserSchema.methods.toJSON = function(){
@@ -121,6 +133,7 @@ UserSchema.statics.findByToken = function(token){
     'tokens.access': 'auth'
   });
 };
+
 
 
 var User = mongoose.model('User', UserSchema);
